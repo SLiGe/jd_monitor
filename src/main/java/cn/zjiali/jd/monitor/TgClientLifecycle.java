@@ -4,40 +4,61 @@ import it.tdlight.client.*;
 import it.tdlight.common.Init;
 import it.tdlight.common.utils.CantLoadLibrary;
 import it.tdlight.jni.TdApi;
+import org.springframework.context.SmartLifecycle;
+import org.springframework.stereotype.Component;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author zJiaLi
  * @since 2023-03-07 16:34
  */
-public class TelegramClient {
+@Component
+public class TgClientLifecycle implements SmartLifecycle {
 
     /**
      * Admin user id, used by the stop command example
      */
     private static final TdApi.MessageSender ADMIN_ID = new TdApi.MessageSenderUser(667900586);
 
+    private final TgProp tgProp;
+
+
     private static SimpleTelegramClient client;
+
+    private final AtomicBoolean START_FLAG = new AtomicBoolean(false);
+
+    public TgClientLifecycle(TgProp tgProp) {
+        this.tgProp = tgProp;
+    }
 
     public void init() throws CantLoadLibrary, InterruptedException {
         Init.start();
-        APIToken apiToken = APIToken.example();
+        APIToken apiToken = new APIToken(tgProp.getApiId(), tgProp.getApiHash());
         TDLibSettings settings = TDLibSettings.create(apiToken);
-        TdApi.AddProxy proxy = new TdApi.AddProxy("127.0.0.1", 7890, true, new TdApi.ProxyTypeHttp());
+        TdApi.AddProxy proxy = new TdApi.AddProxy("127.0.0.1", 7890, true, new TdApi.ProxyTypeSocks5());
         client = new SimpleTelegramClient(settings);
-        client.execute(proxy);
+
         // Configure the authentication info
+//        var authenticationData = AuthenticationData.user("+8617611058853");
         var authenticationData = AuthenticationData.consoleLogin();
         // Add an example update handler that prints when the bot is started
-        client.addUpdateHandler(TdApi.UpdateAuthorizationState.class, TelegramClient::onUpdateAuthorizationState);
+        client.addUpdateHandler(TdApi.UpdateAuthorizationState.class, TgClientLifecycle::onUpdateAuthorizationState);
         // Add an example update handler that prints every received message
-        client.addUpdateHandler(TdApi.UpdateNewMessage.class, TelegramClient::onUpdateNewMessage);
+        client.addUpdateHandler(TdApi.UpdateNewMessage.class, TgClientLifecycle::onUpdateNewMessage);
         // Add an example command handler that stops the bot
         client.addCommandHandler("stop", new StopCommandHandler());
         // Start the client
+
         client.start(authenticationData);
+        client.send(proxy, result -> {
+            System.out.println(result.isError());
+            System.out.println(result.get());
+        });
         // Wait for exit
         client.waitForExit();
     }
+
 
     /**
      * Print new messages received via updateNewMessage
@@ -45,12 +66,12 @@ public class TelegramClient {
     private static void onUpdateNewMessage(TdApi.UpdateNewMessage update) {
         // Get the message content
         var messageContent = update.message.content;
-
         // Get the message text
         String text;
         if (messageContent instanceof TdApi.MessageText messageText) {
             // Get the text of the text message
             text = messageText.text.text;
+
         } else {
             // We handle only text messages, the other messages will be printed as their type
             text = String.format("(%s)", messageContent.getClass().getSimpleName());
@@ -66,6 +87,21 @@ public class TelegramClient {
             // Print the message
             System.out.printf("Received new message from chat %s: %s%n", chatName, text);
         });
+    }
+
+    @Override
+    public void start() {
+
+    }
+
+    @Override
+    public void stop() {
+        client.sendClose();
+    }
+
+    @Override
+    public boolean isRunning() {
+        return START_FLAG.get();
     }
 
     /**
