@@ -1,0 +1,102 @@
+{
+  "groups": [
+    {
+      "name": "tg",
+      "type": "cn.zjiali.jd.monitor.prop.TgProp",
+      "sourceType": "cn.zjiali.jd.monitor.prop.TgProp",
+      "description": "Telegram dev info."
+    },
+    {
+      "name": "proxy",
+      "type": "cn.zjiali.jd.monitor.prop.ProxyProp",
+      "sourceType": "cn.zjiali.jd.monitor.prop.ProxyProp",
+      "description": "Net Proxy info."
+    }
+  ],
+  "properties": [
+    {
+      "name": "tg.apiId",
+      "defaultValue": 94575,
+      "type": "java.lang.Long",
+      "sourceType": "cn.zjiali.jd.monitor.prop.TgProp",
+      "description": "Telegram dev api id."
+    },
+    {
+      "name": "tg.apiHash",
+      "defaultValue": "a3406de8d171bb422bb6ddf3bbd800e2",
+      "type": "java.lang.String",
+      "sourceType": "cn.zjiali.jd.monitor.prop.TgProp",
+      "description": "Telegram dev api hash."
+    },
+    {
+      "name": "tg.userPhone",
+      "defaultValue": "",
+      "type": "java.lang.String",
+      "sourceType": "cn.zjiali.jd.monitor.prop.TgProp",
+      "description": "Telegram dev userPhone."
+    },
+    {
+      "name": "tg.adminId",
+      "defaultValue": "",
+      "type": "java.lang.Long",
+      "sourceType": "cn.zjiali.jd.monitor.prop.TgProp",
+      "description": "Telegram bot adminId."
+    },
+    {
+      "name": "proxy.enable",
+      "defaultValue": false,
+      "type": "java.lang.Boolean",
+      "sourceType": "cn.zjiali.jd.monitor.prop.ProxyProp",
+      "description": "True, if the proxy needs to be enabled."
+    },
+    {
+      "name": "proxy.host",
+      "defaultValue": "127.0.0.1",
+      "type": "java.lang.String",
+      "sourceType": "cn.zjiali.jd.monitor.prop.ProxyProp",
+      "description": "Proxy server IP address."
+    },
+    {
+      "name": "proxy.port",
+      "defaultValue": 7890,
+      "type": "java.lang.Integer",
+      "sourceType": "cn.zjiali.jd.monitor.prop.ProxyProp",
+      "description": "Proxy server port."
+    },
+    {
+      "name": "proxy.type",
+      "defaultValue": "socks5",
+      "type": "java.lang.String",
+      "sourceType": "cn.zjiali.jd.monitor.prop.ProxyProp",
+      "description": "Proxy type:socks5、http、mtproto"
+    },
+    {
+      "name": "proxy.secret",
+      "defaultValue": false,
+      "type": "java.lang.String",
+      "sourceType": "cn.zjiali.jd.monitor.prop.ProxyProp",
+      "description": "The proxy's secret in hexadecimal encoding."
+    },
+    {
+      "name": "proxy.username",
+      "defaultValue": "",
+      "type": "java.lang.String",
+      "sourceType": "cn.zjiali.jd.monitor.prop.ProxyProp",
+      "description": "Username for logging in; may be empty."
+    },
+    {
+      "name": "proxy.password",
+      "defaultValue": "",
+      "type": "java.lang.String",
+      "sourceType": "cn.zjiali.jd.monitor.prop.ProxyProp",
+      "description": "Password for logging in; may be empty."
+    },
+    {
+      "name": "proxy.httpOnly",
+      "defaultValue": false,
+      "type": "java.lang.Boolean",
+      "sourceType": "cn.zjiali.jd.monitor.prop.ProxyProp",
+      "description": "Pass true if the proxy supports only HTTP requests and doesn't support transparent TCP connections via HTTP CONNECT method."
+    }
+  ]
+}
