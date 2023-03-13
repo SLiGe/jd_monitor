@@ -19,11 +19,11 @@ public class TextPatternTest {
 
     @Test
     public void regex(){
-        Pattern pattern = Pattern.compile("export M_WX_LUCK_DRAW_URL=\"?.*\"");
+        Pattern pattern = Pattern.compile("export\\s*M_WX_LUCK_DRAW_URL\\s*=\"([^\"]*)\"");
         Matcher matcher = pattern.matcher("export M_WX_LUCK_DRAW_URL=\"https://lzkj-isv.isvjcloud.com/lzclient/1677428953464/cjwx/common/entry.html?activityId=a467addb75224c02bcce974b31edfa8d&gameType=wxTurnTable&shopid=1000001782\"");
 //        System.out.println(matcher.find());
         while (matcher.find()){
-            System.out.println(matcher.groupCount());
+            System.out.println(matcher.group(1));
         }
 
         String text = "export jd_lzkjInteractUrl=\"https://lzkj-isv.isvjcloud.com/prod/cc/interactsaas/index?activityType=10070&activityId=1630014926584877058&templateId=7fab7995-298c-44a1-af5a-f79c520fa8a888&nodeId=101001&prd=cjwx&adsource=tg_storePage\"\n" +
