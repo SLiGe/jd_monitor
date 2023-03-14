@@ -11,7 +11,7 @@ import java.util.List;
 @ConfigurationProperties("monitor")
 public record MonitorProp(List<ConfigInfo> config, List<String> channel) {
 
-    public record ConfigInfo(String env, String keyword, String name, String script) {
+    public record ConfigInfo(String env, String keyword, String name, String valueRegex, String script) {
 
     }
 

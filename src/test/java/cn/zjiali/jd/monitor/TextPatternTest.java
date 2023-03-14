@@ -1,5 +1,6 @@
 package cn.zjiali.jd.monitor;
 
+import cn.zjiali.jd.monitor.ql.EnvMessageParserManager;
 import cn.zjiali.jd.monitor.ql.QLClient;
 import cn.zjiali.jd.monitor.util.JsonUtil;
 import com.google.gson.annotations.SerializedName;
@@ -8,6 +9,9 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,6 +45,43 @@ public class TextPatternTest {
 
     record BaseResponse<T>(Integer code, T data) {
 
+    }
+
+    @Test
+    public void testFormat(){
+        String key = "M_WX_LUCK_DRAW_URL";
+        String pattern = "export\\s*%s\\s*=\"([^\"]*)\"".formatted(key);
+        System.out.println(pattern);
+        Pattern pattern1 = Pattern.compile(pattern);
+        Matcher matcher = pattern1.matcher("export M_WX_LUCK_DRAW_URL=\"https://lzkj-isv.isvjcloud.com/lzclient/1677428953464/cjwx/common/entry.html?activityId=a467addb75224c02bcce974b31edfa8d&gameType=wxTurnTable&shopid=1000001782\"");
+        if (matcher.find()){
+            System.out.println(matcher.group(1));
+        }
+    }
+
+    @Test
+    public void testEquals(){
+        CronScript cronScript = new CronScript("1", "2");
+        CronScript cronScript2 = new CronScript("1", "2");
+        System.out.println(cronScript.equals(cronScript2));
+        Map<CronScript,String> cronScriptStringMap = new HashMap<>();
+        cronScriptStringMap.put(cronScript,"2");
+        System.out.println(cronScriptStringMap.get(cronScript2));
+    }
+
+    record CronScript(String cron, String script) {
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            CronScript that = (CronScript) o;
+            return Objects.equals(cron, that.cron) && Objects.equals(script, that.script);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(cron, script);
+        }
     }
 
     @Test

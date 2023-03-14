@@ -1,0 +1,95 @@
+tg:
+  apiId:
+  apiHash:
+  userPhone:
+  adminId:
+proxy:
+  enable: true
+  host: 127.0.0.1
+  type: socks5
+  port: 7890
+
+ql:
+  url: http://127.0.0.1:8090
+  client-id: aaaa
+  client-secret: aaaa
+
+notify:
+  bark-url:
+  enable: false
+  group: 京东监控
+
+
+monitor:
+  config:
+    - env: jd_lzkjInteractUrl
+      keyword: jd_lzkjInteractUrl
+      name: jd_lzkjInteract邀请有礼
+      script: jd_lzkjInteract.py
+
+    - env: jd_cjhy_activityId,jd_cjhy_activityUrl
+      keyword: jd_cjhy_activityId,jd_cjhy_activityUrl
+      name: CJ组队瓜分京豆
+      script: jd_cjzdgf.js
+
+    - env: jd_cjhydz_wxTeam_Id
+      keyword: jd_cjhydz_wxTeam_Id
+      name: cj组队瓜分
+      script: jd_cjhydz_wxTeam.js
+
+    - env: jd_inv_authorCode
+      keyword: jd_inv_authorCode
+      name: 邀好友赢大礼
+      script: jd_inviteFriendsGift.py
+
+    - env: jd_drawCenter_activityId
+      keyword: M_WX_CENTER_DRAW_URL
+      value-regex: /[^?&]*activityId=([^&]*)/
+      name: 店铺抽奖-刮刮乐
+      script: jd_drawCenter.js
+
+    - env: jd_wxCartKoi_activityId
+      keyword: jd_wxCartKoi_activityId
+      name: 购物车锦鲤通用活动
+      script: jd_wxCartKoi.js
+
+    - env: jd_zdjr_activityId,jd_zdjr_activityUrl
+      keyword: jd_zdjr_activityId,jd_zdjr_activityUrl
+      name: LZ组队瓜分京豆-加密
+      script: jd_zdjr.js
+
+    - env: jd_lzkjdz_wxTeam_Id
+      keyword: jd_lzkjdz_wxTeam_Id
+      name: lz组队瓜分
+      script: jd_lzkjdz_wxTeam.js
+
+    - env: jd_joinCommonId
+      keyword: jd_joinCommonId
+      name: 通用开卡-joinCommon系列
+      script: jd_joinCommon_opencard.py
+
+    - env: jd_wxCollectCard_activityId
+      keyword: jd_wxCollectCard_activityId
+      name: 集卡抽奖通用活动
+      script: jd_wxCollectCard.js
+
+    - env: M_WX_COLLECT_CARD_URL
+      keyword: M_WX_COLLECT_CARD_URL
+      name: M集卡抽奖
+      script: m_jd_wx_collectCard.js
+
+    - env: M_WX_TEAM_URL
+      keyword: M_WX_TEAM_URL
+      name: M组队瓜分
+      script: m_jd_wx_team.js
+
+    - env: M_WX_SHARE_URL
+      keyword: M_WX_SHARE_URL
+      name: M分享有礼
+      script: m_jd_wx_share.js
+  channel:
+    - -1001670294604
+
+logging:
+  level:
+    it.tdlight: warn

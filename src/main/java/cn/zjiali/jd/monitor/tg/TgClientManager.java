@@ -15,6 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.nio.file.Paths;
+
 /**
  * @author zJiaLi
  * @since 2023-03-13 09:31
@@ -51,6 +53,11 @@ public class TgClientManager {
             Init.start();
             APIToken apiToken = new APIToken(tgProp.apiId(), tgProp.apiHash());
             TDLibSettings settings = TDLibSettings.create(apiToken);
+            // Configure the session directory
+            var sessionPath = Paths.get("jd-monitor-session");
+            settings.setDatabaseDirectoryPath(sessionPath.resolve("data"));
+            settings.setDownloadedFilesDirectoryPath(sessionPath.resolve("downloads"));
+
             client = new SimpleTelegramClient(settings);
             tgClientFactory.build(client);
             // Configure the authentication info
@@ -101,13 +108,13 @@ public class TgClientManager {
     private void onUpdateAuthorizationState(TdApi.UpdateAuthorizationState update) {
         var authorizationState = update.authorizationState;
         if (authorizationState instanceof TdApi.AuthorizationStateReady) {
-            logger.info("bot Logged ");
+            logger.info("Telegram Client Logged...");
         } else if (authorizationState instanceof TdApi.AuthorizationStateClosing) {
-            logger.info("bot Closing... ");
+            logger.info("Telegram Client Closing... ");
         } else if (authorizationState instanceof TdApi.AuthorizationStateClosed) {
-            logger.info("bot Closed");
+            logger.info("Telegram Client Closed...");
         } else if (authorizationState instanceof TdApi.AuthorizationStateLoggingOut) {
-            logger.info("bot Logging out...");
+            logger.info("Telegram Client Logging out...");
         }
     }
 
