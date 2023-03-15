@@ -1,8 +1,8 @@
 package cn.zjiali.jd.monitor.handler;
 
+import cn.zjiali.jd.monitor.prop.MonitorProp;
 import cn.zjiali.jd.monitor.ql.EnvMessageParserManager;
 import cn.zjiali.jd.monitor.tg.TgClientFactory;
-import cn.zjiali.jd.monitor.prop.MonitorProp;
 import it.tdlight.client.SimpleTelegramClient;
 import it.tdlight.jni.TdApi;
 import org.slf4j.Logger;
@@ -39,7 +39,9 @@ public class ChatMessageHandler {
         if (messageContent instanceof TdApi.MessageText messageText) {
             // Get the text of the text message
             text = messageText.text.text;
-            envMessageParserManager.envParser(text);
+            if (monitorProp.channel().contains(Long.toString(update.message.chatId))) {
+                envMessageParserManager.envParser(text);
+            }
         } else {
             // We handle only text messages, the other messages will be printed as their type
             text = String.format("(%s)", messageContent.getClass().getSimpleName());

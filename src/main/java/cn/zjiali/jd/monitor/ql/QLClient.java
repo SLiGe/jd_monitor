@@ -92,23 +92,20 @@ public class QLClient {
 
     }
 
-
-    public void runCron(String cron, String script) {
-
+    public List<Cron.CronInfo> getCron(String script) throws Exception {
         Map<String, String> searchParam = Map.of("searchText", script,
                 "page", "1", "size", "5", "t", String.valueOf(System.currentTimeMillis()));
-        try {
-            record Cron(List<CronInfo> data) {
-                record CronInfo(Integer id, String name, String command, Integer isDisabled) {
+        String cronListJson = HttpUtil.get(joinBaseUrl(QLUrl.CRONS), searchParam, true, headerMap(true));
+        BaseResponse<Cron> cronBaseResponse = JsonUtil.toObjByType(cronListJson, new TypeToken<BaseResponse<Cron>>() {
+        }.getType());
+        return cronBaseResponse.data.data();
+    }
 
-                }
-            }
-            String cronListJson = HttpUtil.get(joinBaseUrl(QLUrl.CRONS), searchParam, true, headerMap(true));
-            BaseResponse<Cron> cronBaseResponse = JsonUtil.toObjByType(cronListJson, new TypeToken<BaseResponse<Cron>>() {
-            }.getType());
-            cronBaseResponse.data.data().stream().filter(it -> 0 == it.isDisabled).findFirst().ifPresent(
+    public void runCron(String cron, String script) {
+        try {
+            getCron(script).stream().filter(it -> 0 == it.isDisabled()).findFirst().ifPresent(
                     it -> {
-                        List<Integer> runIdParam = List.of(it.id);
+                        List<Integer> runIdParam = List.of(it.id());
                         try {
                             HttpUtil.put(joinBaseUrl(QLUrl.CRONS_RUN), JsonUtil.obj2str(runIdParam), headerMap(true));
                         } catch (Exception e) {

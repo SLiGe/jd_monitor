@@ -57,6 +57,11 @@ public class TextPatternTest {
         if (matcher.find()){
             System.out.println(matcher.group(1));
         }
+        Pattern valuePattern = Pattern.compile("[^?&]*activityId=([^&]*)");
+        Matcher matcher1 = valuePattern.matcher("export M_WX_CENTER_DRAW_URL=\"https://lzkj-isv.isvjcloud.com/drawCenter/activity?activityId=2feb4bf007544d36bc103d3b0605d63e&shopid=790139\"");
+        if (matcher1.find()){
+            System.out.println(matcher1.group(1));
+        }
     }
 
     @Test

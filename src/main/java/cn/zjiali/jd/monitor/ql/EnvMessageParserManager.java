@@ -1,6 +1,5 @@
 package cn.zjiali.jd.monitor.ql;
 
-import cn.zjiali.jd.monitor.manager.NotifyManager;
 import cn.zjiali.jd.monitor.prop.MonitorProp;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -15,7 +14,6 @@ import java.time.Duration;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * @author zJiaLi
@@ -26,14 +24,12 @@ public class EnvMessageParserManager {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final MonitorProp monitorProp;
-    private final QLClient qlClient;
-    private final NotifyManager notifyManager;
     private final Cache<String, String> runIgnoreCache;
+    private final CronQueueProcessor cronQueueProcessor;
 
-    public EnvMessageParserManager(MonitorProp monitorProp, QLClient qlClient, NotifyManager notifyManager) {
+    public EnvMessageParserManager(MonitorProp monitorProp, CronQueueProcessor cronQueueProcessor) {
         this.monitorProp = monitorProp;
-        this.qlClient = qlClient;
-        this.notifyManager = notifyManager;
+        this.cronQueueProcessor = cronQueueProcessor;
         this.runIgnoreCache = Caffeine.newBuilder().expireAfterWrite(Duration.ofSeconds(120)).build();
     }
 
@@ -55,7 +51,6 @@ public class EnvMessageParserManager {
     public void envParser(String text) {
         List<MonitorProp.ConfigInfo> configInfos = monitorProp.config();
         Map<CronScript, Map<String, String>> scriptEnvMap = new HashMap<>();
-        List<String> logList = new ArrayList<>();
         for (MonitorProp.ConfigInfo configInfo : configInfos) {
             String keyword = configInfo.keyword();
             String valueRegex = configInfo.valueRegex();
@@ -90,24 +85,15 @@ public class EnvMessageParserManager {
                 String envMd5 = DigestUtils.md5DigestAsHex(allEnvBuilder.toString().getBytes(StandardCharsets.UTF_8));
                 String runningCronEnv = this.runIgnoreCache.getIfPresent(cronScript.cron);
                 if (StringUtils.isBlank(runningCronEnv) || !runningCronEnv.equals(envMd5)) {
-                    env.forEach((name, value) -> {
-                        qlClient.updateEnv(name, value, cronScript.cron);
-                        logList.add("替换变量[%s] => [%s]".formatted(name, value));
-                    });
-                    qlClient.runCron(cronScript.cron, cronScript.script);
+                    Set<CronContext.Env> envs = new HashSet<>();
+                    env.forEach((name, value) -> envs.add(new CronContext.Env(name, value, cronScript.cron)));
+                    this.cronQueueProcessor.addCron(new CronContext(cronScript.cron, cronScript.script, envs));
                     this.runIgnoreCache.put(cronScript.cron, envMd5);
-                    logList.add("执行任务[%s]".formatted(cronScript.cron));
                 } else {
-                    logList.add("忽略任务[%s]".formatted(cronScript.cron));
+                    logger.info("忽略任务[{}]", cronScript.cron);
                 }
 
             });
-        }
-        logList.forEach(logger::info);
-        if (notifyManager.enable() && !logList.isEmpty()) {
-            notifyManager.sendNotify("触发任务",
-                    logList.stream().map(String::trim)
-                            .collect(Collectors.joining("\n")));
         }
     }
 

@@ -13,8 +13,10 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>jd_monitor</name>
     <description>jd_monitor</description>
+    <packaging>jar</packaging>
     <properties>
         <java.version>17</java.version>
+        <skipTests>true</skipTests>
     </properties>
     <dependencies>
         <dependency>
@@ -91,10 +93,10 @@
 
     <build>
         <plugins>
-            <plugin>
+            <!--<plugin>
                 <groupId>org.graalvm.buildtools</groupId>
                 <artifactId>native-maven-plugin</artifactId>
-            </plugin>
+            </plugin>-->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

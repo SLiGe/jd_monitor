@@ -1,7 +1,7 @@
 package cn.zjiali.jd.monitor.handler;
 
-import cn.zjiali.jd.monitor.tg.TgClientFactory;
 import cn.zjiali.jd.monitor.prop.TgProp;
+import cn.zjiali.jd.monitor.tg.TgClientFactory;
 import it.tdlight.client.CommandHandler;
 import it.tdlight.client.SimpleTelegramClient;
 import it.tdlight.jni.TdApi;
