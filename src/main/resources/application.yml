@@ -44,7 +44,7 @@ monitor:
 
     - env: jd_drawCenter_activityId
       keyword: M_WX_CENTER_DRAW_URL
-      value-regex: /[^?&]*activityId=([^&]*)/
+      value-regex: '[^?&]*M_WX_CENTER_DRAW_URL=([^&]*)'
       name: 店铺抽奖-刮刮乐
       script: jd_drawCenter.js
 
