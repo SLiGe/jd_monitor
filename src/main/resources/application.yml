@@ -87,6 +87,11 @@ monitor:
       keyword: M_WX_SHARE_URL
       name: M分享有礼
       script: m_jd_wx_share.js
+
+    - env: jd_fxyl_activityId
+      keyword: jd_fxyl_activityId
+      name: 分享有礼
+      script: jd_share.js
   channel:
     - -1001670294604
 
