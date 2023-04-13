@@ -85,7 +85,6 @@ public class CronQueueProcessor {
 
         @Override
         public void run() {
-            logger.debug("等待运行队列任务数量:{}", waitCronQueue.size());
             while (!waitCronQueue.isEmpty()) {
                 CronContext cronContext = waitCronQueue.poll();
                 if (checkCronStatus(cronContext)) {
@@ -103,7 +102,6 @@ public class CronQueueProcessor {
     private class ProcessRunQueueTask implements Runnable {
         @Override
         public void run() {
-            logger.debug("运行队列任务数量:{}", runCronQueue.size());
             while (!runCronQueue.isEmpty()) {
                 CronContext cronContext = runCronQueue.poll();
                 if (checkCronStatus(cronContext)) {
