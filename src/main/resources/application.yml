@@ -92,6 +92,16 @@ monitor:
       keyword: jd_fxyl_activityId
       name: 分享有礼
       script: jd_share.js
+
+    - env: LUCK_DRAW_URL
+      keyword: LUCK_DRAW_URL
+      name: 店铺抽奖-超级会员
+      script: jd_luck_draw.js
+
+    - env: jd_wxBulidActivityId
+      keyword: jd_wxBuildActivity_activityId
+      name:  盖楼有礼 · 超级无线
+      script: jd_wxBulidActivity.py
   channel:
     - -1001670294604
 
