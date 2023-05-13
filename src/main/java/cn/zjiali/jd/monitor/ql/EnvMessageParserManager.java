@@ -1,6 +1,7 @@
 package cn.zjiali.jd.monitor.ql;
 
-import cn.zjiali.jd.monitor.prop.MonitorProp;
+import cn.zjiali.jd.monitor.db.Config;
+import cn.zjiali.jd.monitor.db.ConfigRepository;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.apache.commons.lang3.StringUtils;
@@ -23,13 +24,13 @@ import java.util.regex.Pattern;
 public class EnvMessageParserManager {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    private final MonitorProp monitorProp;
     private final Cache<String, String> runIgnoreCache;
     private final CronQueueProcessor cronQueueProcessor;
+    private final ConfigRepository configRepository;
 
-    public EnvMessageParserManager(MonitorProp monitorProp, CronQueueProcessor cronQueueProcessor) {
-        this.monitorProp = monitorProp;
+    public EnvMessageParserManager(CronQueueProcessor cronQueueProcessor, ConfigRepository configRepository) {
         this.cronQueueProcessor = cronQueueProcessor;
+        this.configRepository = configRepository;
         this.runIgnoreCache = Caffeine.newBuilder().expireAfterWrite(Duration.ofSeconds(120)).build();
     }
 
@@ -49,12 +50,12 @@ public class EnvMessageParserManager {
     }
 
     public void envParser(String text) {
-        List<MonitorProp.ConfigInfo> configInfos = monitorProp.config();
+        List<Config> configInfos = configRepository.findAll();
         Map<CronScript, Map<String, String>> scriptEnvMap = new HashMap<>();
-        for (MonitorProp.ConfigInfo configInfo : configInfos) {
-            String keyword = configInfo.keyword();
-            String valueRegex = configInfo.valueRegex();
-            String env = configInfo.env();
+        for (Config configInfo : configInfos) {
+            String keyword = configInfo.getKeyword();
+            String valueRegex = configInfo.getValueRegex();
+            String env = configInfo.getEnv();
             String[] envArray = env.split(",");
             String[] keywordArray = keyword.split(",");
             int index = 0;
@@ -72,7 +73,7 @@ public class EnvMessageParserManager {
                     }
                 }
                 if (StringUtils.isNotBlank(envValue)) {
-                    Map<String, String> envMap = scriptEnvMap.computeIfAbsent(new CronScript(configInfo.name(), configInfo.script()), k -> new HashMap<>());
+                    Map<String, String> envMap = scriptEnvMap.computeIfAbsent(new CronScript(configInfo.getName(), configInfo.getScript()), k -> new HashMap<>());
                     envMap.put(envArray[index], envValue);
                 }
                 index++;

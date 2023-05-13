@@ -10,17 +10,23 @@ import org.springframework.scheduling.annotation.Scheduled;
  */
 @Configuration
 @EnableScheduling
-public class QLTokenTask {
+public class QLTask {
 
     private final QLClient qlClient;
+    private final EnvConfigManager envConfigManager;
 
-    public QLTokenTask(QLClient qlClient) {
+    public QLTask(QLClient qlClient, EnvConfigManager envConfigManager) {
         this.qlClient = qlClient;
+        this.envConfigManager = envConfigManager;
     }
 
     @Scheduled(cron = "0 0 0/12 * * ?")
-    public void genQLToken(){
+    public void genQLToken() {
         qlClient.authToken();
     }
 
+    @Scheduled(cron = "0 1/5 * * * ?")
+    public void refreshEnvConfig() {
+        envConfigManager.refreshEnvConfigData();
+    }
 }

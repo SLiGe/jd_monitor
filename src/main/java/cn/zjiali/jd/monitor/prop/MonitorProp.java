@@ -9,7 +9,7 @@ import java.util.List;
  * @since 2023-03-13 14:44
  */
 @ConfigurationProperties("monitor")
-public record MonitorProp(List<ConfigInfo> config, List<String> channel) {
+public record MonitorProp(String dataUrl, List<ConfigInfo> config, List<String> channel) {
 
     public record ConfigInfo(String env, String keyword, String name, String valueRegex, String script) {
 
