@@ -11,6 +11,12 @@
       "type": "cn.zjiali.jd.monitor.prop.ProxyProp",
       "sourceType": "cn.zjiali.jd.monitor.prop.ProxyProp",
       "description": "Net Proxy info."
+    },
+    {
+      "name": "monitor",
+      "type": "cn.zjiali.jd.monitor.prop.MonitorProp",
+      "sourceType": "cn.zjiali.jd.monitor.prop.MonitorProp",
+      "description": "Monitor Data info."
     }
   ],
   "properties": [
@@ -97,6 +103,13 @@
       "type": "java.lang.Boolean",
       "sourceType": "cn.zjiali.jd.monitor.prop.ProxyProp",
       "description": "Pass true if the proxy supports only HTTP requests and doesn't support transparent TCP connections via HTTP CONNECT method."
+    },
+    {
+      "name": "monitor.data-url",
+      "defaultValue": "http://127.0.0.1:5244/d/share/env.json",
+      "type": "java.lang.String",
+      "sourceType": "cn.zjiali.jd.monitor.prop.MonitorProp",
+      "description": "monitor env datasource url,not be empty."
     }
   ]
 }
