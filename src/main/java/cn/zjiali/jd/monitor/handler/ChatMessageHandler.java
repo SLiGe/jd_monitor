@@ -55,7 +55,7 @@ public class ChatMessageHandler {
             var chatName = chat.title;
 
             // Print the message
-            logger.debug("Received new message from chat {} {}: {}", chat.id, chatName, text);
+            logger.debug("New message from chat {} {}: {}", chat.id, chatName, text);
         });
     }
 }

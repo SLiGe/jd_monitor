@@ -43,7 +43,7 @@ public class CronQueueProcessor {
 
     public void start() {
         // 每3s执行一次
-        executor.scheduleAtFixedRate(new ProcessRunQueueTask(), 0, 3, TimeUnit.SECONDS);
+        executor.scheduleAtFixedRate(new ProcessRunQueueTask(), 0, 5, TimeUnit.SECONDS);
         // 每30s执行一次
         executor.scheduleAtFixedRate(new ProcessWaitQueueTask(), 0, 30, TimeUnit.SECONDS);
         logger.info("青龙任务队列已启动");

@@ -4,13 +4,10 @@ import cn.zjiali.jd.monitor.handler.ChatMessageHandler;
 import cn.zjiali.jd.monitor.handler.StopCommandHandler;
 import cn.zjiali.jd.monitor.prop.ProxyProp;
 import cn.zjiali.jd.monitor.prop.TgProp;
-import it.tdlight.client.APIToken;
-import it.tdlight.client.AuthenticationData;
-import it.tdlight.client.SimpleTelegramClient;
-import it.tdlight.client.TDLibSettings;
-import it.tdlight.common.Init;
-import it.tdlight.common.utils.CantLoadLibrary;
+import it.tdlight.Init;
+import it.tdlight.client.*;
 import it.tdlight.jni.TdApi;
+import it.tdlight.util.UnsupportedNativeLibraryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -50,31 +47,30 @@ public class TgClientManager {
 
     public void start() {
         try {
-            Init.start();
+            Init.init();
+        } catch (UnsupportedNativeLibraryException e) {
+            throw new RuntimeException(e);
+        }
+        try (SimpleTelegramClientFactory clientFactory = new SimpleTelegramClientFactory()) {
             APIToken apiToken = new APIToken(tgProp.apiId(), tgProp.apiHash());
             TDLibSettings settings = TDLibSettings.create(apiToken);
             // Configure the session directory
             var sessionPath = Paths.get("jd-monitor-session");
             settings.setDatabaseDirectoryPath(sessionPath.resolve("data"));
             settings.setDownloadedFilesDirectoryPath(sessionPath.resolve("downloads"));
-
-            client = new SimpleTelegramClient(settings);
-            tgClientFactory.build(client);
+            SimpleTelegramClientBuilder telegramClientBuilder = clientFactory.builder(settings);
             // Configure the authentication info
-            var authenticationData = AuthenticationData.user(tgProp.userPhone());
+            SimpleAuthenticationSupplier<?> user = AuthenticationSupplier.user(tgProp.userPhone());
             // Add an example update handler that prints when the bot is started
-            client.addUpdateHandler(TdApi.UpdateAuthorizationState.class, this::onUpdateAuthorizationState);
+            telegramClientBuilder.addUpdateHandler(TdApi.UpdateAuthorizationState.class, this::onUpdateAuthorizationState);
             // Add an example update handler that prints every received message
-            client.addUpdateHandler(TdApi.UpdateNewMessage.class, chatMessageHandler::onUpdateNewMessage);
+            telegramClientBuilder.addUpdateHandler(TdApi.UpdateNewMessage.class, chatMessageHandler::onUpdateNewMessage);
             // Add an example command handler that stops the bot
-            client.addCommandHandler("stop", stopCommandHandler);
+            telegramClientBuilder.addCommandHandler("stop", stopCommandHandler);
             // Start the client
-            client.start(authenticationData);
+            this.client = telegramClientBuilder.build(user);
+            tgClientFactory.build(this.client);
             proxySetting();
-            // Wait for exit
-            client.waitForExit();
-        } catch (CantLoadLibrary | InterruptedException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -84,6 +80,7 @@ public class TgClientManager {
 
     private void proxySetting() {
         if (proxyProp.enable()) {
+            logger.info("set tg proxy...");
             TdApi.ProxyType proxy = null;
             switch (proxyProp.type()) {
                 case "socks5" -> proxy = new TdApi.ProxyTypeSocks5(proxyProp.username(), proxyProp.password());
