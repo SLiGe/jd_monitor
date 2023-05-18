@@ -70,9 +70,9 @@ public class TgClientManager {
             // Start the client
             this.client = telegramClientBuilder.build(user);
             tgClientFactory.build(this.client);
-            this.client.send(new TdApi.SetLogVerbosityLevel(5), (r) -> logger.info("set log verbosity level :{}", r.get()));
+           /* this.client.send(new TdApi.SetLogVerbosityLevel(5), (r) -> logger.info("set log verbosity level :{}", r.get()));
             this.client.send(new TdApi.SetLogStream(new TdApi.LogStreamFile("/home/gary/jd_monitor/td.log",
-                    Long.parseLong("1073741824"), true)), (r) -> logger.info("set log stream level :{}", r.get()));
+                    Long.parseLong("1073741824"), true)), (r) -> logger.info("set log stream level :{}", r.get()));*/
             proxySetting();
         }
     }

@@ -21,6 +21,13 @@
   ],
   "properties": [
     {
+      "name": "tg.enable",
+      "defaultValue": false,
+      "type": "java.lang.Boolean",
+      "sourceType": "cn.zjiali.jd.monitor.prop.TgProp",
+      "description": "Telegram enable flag."
+    },
+    {
       "name": "tg.apiId",
       "defaultValue": 94575,
       "type": "java.lang.Long",

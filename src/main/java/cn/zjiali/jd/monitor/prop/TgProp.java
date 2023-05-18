@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 
 @ConfigurationProperties(prefix = "tg")
-public record TgProp(Integer apiId,
+public record TgProp(Boolean enable, Integer apiId,
                      String apiHash,
                      String userPhone,
                      Long adminId) {

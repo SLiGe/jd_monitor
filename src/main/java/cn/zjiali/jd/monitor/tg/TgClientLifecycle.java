@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @since 2023-03-07 16:34
  */
 @Component
-@ConditionalOnProperty(value = "tg.enable", havingValue = "1")
+@ConditionalOnProperty(value = "tg.enable", havingValue = "true")
 public class TgClientLifecycle implements SmartLifecycle {
 
 

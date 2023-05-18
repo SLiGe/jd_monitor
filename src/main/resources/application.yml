@@ -33,7 +33,3 @@ monitor:
   data-url: https://file.fanlisky.cn/d/share/env.json
   channel:
     - -1001670294604
-
-logging:
-  level:
-    it.tdlight: warn
