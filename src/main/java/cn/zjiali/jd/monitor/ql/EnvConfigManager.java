@@ -36,10 +36,10 @@ public class EnvConfigManager {
             List<Config> configList = JsonUtil.toObjByType(json, type);
             configList.forEach(config -> {
                 Optional<Config> configByEnv = configRepository.findConfigByEnv(config.getEnv());
-                configByEnv.ifPresentOrElse(localConfig -> logger.info("has config: {}", localConfig), () -> {
+                if (configByEnv.isEmpty()){
                     configRepository.save(config);
                     logger.info("save config: {}", config);
-                });
+                }
             });
         } catch (Exception e) {
             throw new RuntimeException(e);
