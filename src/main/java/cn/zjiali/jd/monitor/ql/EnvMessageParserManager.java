@@ -2,6 +2,7 @@ package cn.zjiali.jd.monitor.ql;
 
 import cn.zjiali.jd.monitor.db.Config;
 import cn.zjiali.jd.monitor.db.ConfigRepository;
+import cn.zjiali.jd.monitor.tg.TgManager;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.apache.commons.lang3.StringUtils;
@@ -27,10 +28,12 @@ public class EnvMessageParserManager {
     private final Cache<String, String> runIgnoreCache;
     private final CronQueueProcessor cronQueueProcessor;
     private final ConfigRepository configRepository;
+    private final TgManager tgManager;
 
-    public EnvMessageParserManager(CronQueueProcessor cronQueueProcessor, ConfigRepository configRepository) {
+    public EnvMessageParserManager(CronQueueProcessor cronQueueProcessor, ConfigRepository configRepository, TgManager tgManager) {
         this.cronQueueProcessor = cronQueueProcessor;
         this.configRepository = configRepository;
+        this.tgManager = tgManager;
         this.runIgnoreCache = Caffeine.newBuilder().expireAfterWrite(Duration.ofSeconds(120)).build();
     }
 
@@ -93,8 +96,9 @@ public class EnvMessageParserManager {
                 } else {
                     logger.info("忽略任务[{}]", cronScript.cron);
                 }
-
             });
+        } else {
+            this.tgManager.sendMessage(-1001818798939L, text + "\n未检测到此变量");
         }
     }
 

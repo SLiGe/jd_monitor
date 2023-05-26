@@ -81,12 +81,12 @@
             <!-- don't specify the version here -->
         </dependency>
         <!-- Example windows amd64 natives -->
-        <dependency>
+<!--        <dependency>
             <groupId>it.tdlight</groupId>
             <artifactId>tdlight-natives</artifactId>
             <classifier>windows_amd64</classifier>
-            <!-- don't specify the version here -->
-        </dependency>
+            &lt;!&ndash; don't specify the version here &ndash;&gt;
+        </dependency>-->
     </dependencies>
 
     <dependencyManagement>
