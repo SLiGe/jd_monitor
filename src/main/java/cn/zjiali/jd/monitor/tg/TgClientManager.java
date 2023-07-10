@@ -33,7 +33,8 @@ public class TgClientManager {
 
     private final Logger logger = LoggerFactory.getLogger(TgClientManager.class);
 
-    private SimpleTelegramClient client;
+    private SimpleTelegramClient userClient;
+    private SimpleTelegramClient botClient;
 
     public TgClientManager(TgProp tgProp, ProxyProp proxyProp, TgClientFactory tgClientFactory, ChatMessageHandler chatMessageHandler,
                            StopCommandHandler stopCommandHandler) {
@@ -51,6 +52,11 @@ public class TgClientManager {
         } catch (UnsupportedNativeLibraryException e) {
             throw new RuntimeException(e);
         }
+        startUser();
+        startBot();
+    }
+
+    public void startUser() {
         try (SimpleTelegramClientFactory clientFactory = new SimpleTelegramClientFactory()) {
             APIToken apiToken = new APIToken(tgProp.apiId(), tgProp.apiHash());
             TDLibSettings settings = TDLibSettings.create(apiToken);
@@ -68,20 +74,35 @@ public class TgClientManager {
             // Add an example command handler that stops the bot
             telegramClientBuilder.addCommandHandler("stop", stopCommandHandler);
             // Start the client
-            this.client = telegramClientBuilder.build(user);
-            tgClientFactory.build(this.client);
-           /* this.client.send(new TdApi.SetLogVerbosityLevel(5), (r) -> logger.info("set log verbosity level :{}", r.get()));
-            this.client.send(new TdApi.SetLogStream(new TdApi.LogStreamFile("/home/gary/jd_monitor/td.log",
-                    Long.parseLong("1073741824"), true)), (r) -> logger.info("set log stream level :{}", r.get()));*/
-            proxySetting();
+            this.userClient = telegramClientBuilder.build(user);
+            tgClientFactory.build(this.userClient);
+            proxySetting(userClient);
+        }
+    }
+
+    public void startBot() {
+        try (SimpleTelegramClientFactory clientFactory = new SimpleTelegramClientFactory()) {
+            APIToken apiToken = new APIToken(tgProp.apiId(), tgProp.apiHash());
+            TDLibSettings settings = TDLibSettings.create(apiToken);
+            var sessionPath = Paths.get("jd-monitor-bot-session");
+            settings.setDatabaseDirectoryPath(sessionPath.resolve("bot-data"));
+            settings.setDownloadedFilesDirectoryPath(sessionPath.resolve("bot-downloads"));
+            SimpleTelegramClientBuilder telegramClientBuilder = clientFactory.builder(settings);
+            SimpleAuthenticationSupplier<?> bot = AuthenticationSupplier.bot(tgProp.botToken());
+            telegramClientBuilder.addUpdateHandler(TdApi.UpdateAuthorizationState.class, this::onUpdateAuthorizationState);
+            telegramClientBuilder.addCommandHandler("stop", stopCommandHandler);
+            this.botClient = telegramClientBuilder.build(bot);
+            tgClientFactory.buildBot(this.botClient);
+            proxySetting(botClient);
         }
     }
 
     public void stop() {
-        client.sendClose();
+        userClient.sendClose();
+        botClient.sendClose();
     }
 
-    private void proxySetting() {
+    private void proxySetting(SimpleTelegramClient client) {
         if (proxyProp.enable()) {
             logger.info("set tg proxy...");
             TdApi.ProxyType proxy = null;
@@ -94,9 +115,7 @@ public class TgClientManager {
             TdApi.AddProxy addProxy = new TdApi.AddProxy(proxyProp.host(), proxyProp.port(), true, proxy);
             client.send(addProxy, result -> {
                 logger.info("Telegram add proxy result: {}", !result.isError());
-                result.error().ifPresent(e -> {
-                    logger.info("Telegram add proxy error result: {}", e);
-                });
+                result.error().ifPresent(e -> logger.info("Telegram add proxy error result: {}", e));
             });
         }
     }

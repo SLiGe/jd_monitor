@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class TgClientLifecycle implements SmartLifecycle {
 
 
-    private final AtomicBoolean START_FLAG = new AtomicBoolean(false);
+    private final AtomicBoolean startFlag = new AtomicBoolean(false);
 
     private final TgClientManager tgClientManager;
 
@@ -27,7 +27,7 @@ public class TgClientLifecycle implements SmartLifecycle {
     @Override
     public void start() {
         tgClientManager.start();
-        START_FLAG.set(true);
+        startFlag.set(true);
     }
 
     @Override
@@ -37,7 +37,7 @@ public class TgClientLifecycle implements SmartLifecycle {
 
     @Override
     public boolean isRunning() {
-        return START_FLAG.get();
+        return startFlag.get();
     }
 
 

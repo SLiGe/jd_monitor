@@ -11,6 +11,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public record TgProp(Boolean enable, Integer apiId,
                      String apiHash,
                      String userPhone,
-                     Long adminId) {
+                     Long adminId, String botToken) {
 
 }

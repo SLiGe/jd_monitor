@@ -28,7 +28,7 @@ public class TgManager {
                 new TdApi.InlineKeyboardButton("https://telegram.org?3", new TdApi.InlineKeyboardButtonTypeUrl())};
         TdApi.ReplyMarkup replyMarkup = new TdApi.ReplyMarkupInlineKeyboard(new TdApi.InlineKeyboardButton[][]{row, row, row});
         TdApi.InputMessageContent content = new TdApi.InputMessageText(new TdApi.FormattedText(message, null), false, true);
-        this.tgClientFactory.client().send(new TdApi.SendMessage(chatId, 0, 0, null, replyMarkup, content), defaultHandler);
+        this.tgClientFactory.bot().send(new TdApi.SendMessage(chatId, 0, 0, null, replyMarkup, content), defaultHandler);
     }
 
     private static class DefaultHandler<T extends TdApi.Object> implements GenericResultHandler<T> {
