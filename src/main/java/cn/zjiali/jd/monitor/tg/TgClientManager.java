@@ -1,5 +1,6 @@
 package cn.zjiali.jd.monitor.tg;
 
+import cn.zjiali.jd.monitor.handler.BotChatMessageHandler;
 import cn.zjiali.jd.monitor.handler.ChatMessageHandler;
 import cn.zjiali.jd.monitor.handler.StopCommandHandler;
 import cn.zjiali.jd.monitor.prop.ProxyProp;
@@ -22,26 +23,22 @@ import java.nio.file.Paths;
 public class TgClientManager {
 
     private final TgProp tgProp;
-
     private final ProxyProp proxyProp;
-
     private final TgClientFactory tgClientFactory;
-
     private final ChatMessageHandler chatMessageHandler;
-
+    private final BotChatMessageHandler botChatMessageHandler;
     private final StopCommandHandler stopCommandHandler;
-
     private final Logger logger = LoggerFactory.getLogger(TgClientManager.class);
-
     private SimpleTelegramClient userClient;
     private SimpleTelegramClient botClient;
 
     public TgClientManager(TgProp tgProp, ProxyProp proxyProp, TgClientFactory tgClientFactory, ChatMessageHandler chatMessageHandler,
-                           StopCommandHandler stopCommandHandler) {
+                           BotChatMessageHandler botChatMessageHandler, StopCommandHandler stopCommandHandler) {
         this.tgProp = tgProp;
         this.proxyProp = proxyProp;
         this.tgClientFactory = tgClientFactory;
         this.chatMessageHandler = chatMessageHandler;
+        this.botChatMessageHandler = botChatMessageHandler;
         this.stopCommandHandler = stopCommandHandler;
     }
 
@@ -77,6 +74,7 @@ public class TgClientManager {
             this.userClient = telegramClientBuilder.build(user);
             tgClientFactory.build(this.userClient);
             proxySetting(userClient);
+            logger.info("...User client login success...");
         }
     }
 
@@ -90,10 +88,12 @@ public class TgClientManager {
             SimpleTelegramClientBuilder telegramClientBuilder = clientFactory.builder(settings);
             SimpleAuthenticationSupplier<?> bot = AuthenticationSupplier.bot(tgProp.botToken());
             telegramClientBuilder.addUpdateHandler(TdApi.UpdateAuthorizationState.class, this::onUpdateAuthorizationState);
+            telegramClientBuilder.addUpdateHandler(TdApi.UpdateNewMessage.class, botChatMessageHandler::onUpdateNewMessage);
             telegramClientBuilder.addCommandHandler("stop", stopCommandHandler);
             this.botClient = telegramClientBuilder.build(bot);
             tgClientFactory.buildBot(this.botClient);
             proxySetting(botClient);
+            logger.info("...Bot client login success...");
         }
     }
 

@@ -6,6 +6,8 @@ import cn.zjiali.jd.monitor.util.JsonUtil;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.lang.reflect.Type;
 import java.util.Arrays;
@@ -19,6 +21,7 @@ import java.util.regex.Pattern;
  * @author zJiaLi
  * @since 2023-03-13 16:31
  */
+@SpringBootTest
 public class TextPatternTest {
 
     @Test
@@ -45,6 +48,18 @@ public class TextPatternTest {
 
     record BaseResponse<T>(Integer code, T data) {
 
+    }
+
+    @Autowired
+    private EnvMessageParserManager envMessageParserManager;
+
+    @Test
+    public void testMessage(){
+        String message = """
+                🎯 店铺抽奖 · 超级会员
+                export LUCK_DRAW_URL="https://cjhy-isv.isvjcloud.com/wxDrawActivity/activity/1446376?activityId=b41b3477f267435886a777541004701b"
+                """;
+        envMessageParserManager.envParser(message);
     }
 
     @Test
