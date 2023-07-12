@@ -23,12 +23,8 @@ public class TgManager {
     private static final GenericResultHandler<TdApi.Message> defaultHandler = new DefaultHandler<>();
 
     public void sendMessage(Long chatId, String message) {
-        TdApi.InlineKeyboardButton[] row = {new TdApi.InlineKeyboardButton("https://telegram.org?1", new TdApi.InlineKeyboardButtonTypeUrl()),
-                new TdApi.InlineKeyboardButton("https://telegram.org?2", new TdApi.InlineKeyboardButtonTypeUrl()),
-                new TdApi.InlineKeyboardButton("https://telegram.org?3", new TdApi.InlineKeyboardButtonTypeUrl())};
-        TdApi.ReplyMarkup replyMarkup = new TdApi.ReplyMarkupInlineKeyboard(new TdApi.InlineKeyboardButton[][]{row, row, row});
         TdApi.InputMessageContent content = new TdApi.InputMessageText(new TdApi.FormattedText(message, null), false, true);
-        this.tgClientFactory.bot().send(new TdApi.SendMessage(chatId, 0, 0, null, replyMarkup, content), defaultHandler);
+        this.tgClientFactory.bot().send(new TdApi.SendMessage(chatId, 0, 0, null, null, content), defaultHandler);
     }
 
     private static class DefaultHandler<T extends TdApi.Object> implements GenericResultHandler<T> {
