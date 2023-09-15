@@ -26,12 +26,12 @@ public class EnvMessageParserManager {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Cache<String, String> runIgnoreCache;
-    private final CronQueueProcessor cronQueueProcessor;
+    private final MQTaskQueueProcessor mqTaskQueueProcessor;
     private final ConfigRepository configRepository;
     private final TgManager tgManager;
 
-    public EnvMessageParserManager(CronQueueProcessor cronQueueProcessor, ConfigRepository configRepository, TgManager tgManager) {
-        this.cronQueueProcessor = cronQueueProcessor;
+    public EnvMessageParserManager(MQTaskQueueProcessor mqTaskQueueProcessor, ConfigRepository configRepository, TgManager tgManager) {
+        this.mqTaskQueueProcessor = mqTaskQueueProcessor;
         this.configRepository = configRepository;
         this.tgManager = tgManager;
         this.runIgnoreCache = Caffeine.newBuilder().expireAfterWrite(Duration.ofSeconds(120)).build();
@@ -91,7 +91,7 @@ public class EnvMessageParserManager {
                 if (StringUtils.isBlank(runningCronEnv) || !runningCronEnv.equals(envMd5)) {
                     Set<CronContext.Env> envs = new HashSet<>();
                     env.forEach((name, value) -> envs.add(new CronContext.Env(name, value, cronScript.cron)));
-                    this.cronQueueProcessor.addCron(new CronContext(cronScript.cron, cronScript.script, envs));
+                    this.mqTaskQueueProcessor.addCron(new CronContext(cronScript.cron, cronScript.script, envs));
                     this.runIgnoreCache.put(cronScript.cron, envMd5);
                 } else {
                     logger.info("忽略任务[{}]", cronScript.cron);

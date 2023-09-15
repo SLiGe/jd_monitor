@@ -87,6 +87,10 @@
             <classifier>windows_amd64</classifier>
             &lt;!&ndash; don't specify the version here &ndash;&gt;
         </dependency>-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
