@@ -49,8 +49,8 @@ public class TgClientManager {
         } catch (UnsupportedNativeLibraryException e) {
             throw new RuntimeException(e);
         }
-        startUser();
-        startBot();
+        new Thread(this::startUser).start();
+        new Thread(this::startBot).start();
     }
 
     public void startUser() {
