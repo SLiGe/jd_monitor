@@ -13,7 +13,7 @@ import java.util.Map;
  * @since 2022-11-30 23:47
  */
 @Configuration
-public class RobotMessageMQConfig {
+public class QLTaskMQConfig {
 
     @Bean(value = "qlTaskExchange")
     public Exchange qlTaskExchange() {
@@ -38,7 +38,7 @@ public class RobotMessageMQConfig {
         return BindingBuilder.bind(queue).to(exchange).with(Queues.QL_RUN_TASK_MESSAGE.routingKey()).noargs();
     }
 
-    @Bean(value = "bindingQlRunTaskMessage")
+    @Bean(value = "bindingQlWaitTaskMessage")
     public Binding bindingQlWaitTaskMessage(@Qualifier(value = "qlWaitTaskMessageQueue") Queue queue, @Qualifier(value = "qlTaskExchange") Exchange exchange) {
         return BindingBuilder.bind(queue).to(exchange).with(Queues.QL_WAIT_TASK_MESSAGE.routingKey()).noargs();
     }
