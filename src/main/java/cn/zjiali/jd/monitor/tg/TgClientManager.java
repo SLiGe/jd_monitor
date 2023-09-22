@@ -49,8 +49,8 @@ public class TgClientManager {
         } catch (UnsupportedNativeLibraryException e) {
             throw new RuntimeException(e);
         }
-        new Thread(this::startUser).start();
-        new Thread(this::startBot).start();
+        new Thread(this::startUser,"User thread").start();
+        new Thread(this::startBot,"Bot thread").start();
     }
 
     public void startUser() {
@@ -103,21 +103,25 @@ public class TgClientManager {
     }
 
     private void proxySetting(SimpleTelegramClient client) {
-        if (proxyProp.enable()) {
+        if (Boolean.TRUE.equals(proxyProp.enable())) {
             logger.info("set tg proxy...");
-            TdApi.ProxyType proxy = null;
-            switch (proxyProp.type()) {
-                case "socks5" -> proxy = new TdApi.ProxyTypeSocks5(proxyProp.username(), proxyProp.password());
-                case "http" ->
-                        proxy = new TdApi.ProxyTypeHttp(proxyProp.username(), proxyProp.password(), proxyProp.httpOnly());
-                case "mtproto" -> proxy = new TdApi.ProxyTypeMtproto(proxyProp.secret());
-            }
-            TdApi.AddProxy addProxy = new TdApi.AddProxy(proxyProp.host(), proxyProp.port(), true, proxy);
+            TdApi.AddProxy addProxy = getProxy();
             client.send(addProxy, result -> {
                 logger.info("Telegram add proxy result: {}", !result.isError());
                 result.error().ifPresent(e -> logger.info("Telegram add proxy error result: {}", e));
             });
         }
+    }
+
+    private TdApi.AddProxy getProxy() {
+        TdApi.ProxyType proxy;
+        switch (proxyProp.type()) {
+            case "http" ->
+                    proxy = new TdApi.ProxyTypeHttp(proxyProp.username(), proxyProp.password(), proxyProp.httpOnly());
+            case "mtproto" -> proxy = new TdApi.ProxyTypeMtproto(proxyProp.secret());
+            default -> proxy = new TdApi.ProxyTypeSocks5(proxyProp.username(), proxyProp.password());
+        }
+        return new TdApi.AddProxy(proxyProp.host(), proxyProp.port(), true, proxy);
     }
 
 
