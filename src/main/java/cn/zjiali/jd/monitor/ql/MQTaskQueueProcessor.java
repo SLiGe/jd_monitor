@@ -18,7 +18,7 @@ public class MQTaskQueueProcessor extends TaskQueueProcessor {
     @Override
     public void addCron(CronContext element) {
         this.rabbitTemplate.convertAndSend(Queues.QL_RUN_TASK_MESSAGE.exchange(), Queues.QL_RUN_TASK_MESSAGE.routingKey(), element, m -> {
-            m.getMessageProperties().setDelay(5000);
+            m.getMessageProperties().setDelay(50);
             return m;
         });
     }
@@ -32,7 +32,7 @@ public class MQTaskQueueProcessor extends TaskQueueProcessor {
         } else {
             // 元素状态不符合，放回队列
             this.rabbitTemplate.convertAndSend(Queues.QL_WAIT_TASK_MESSAGE.exchange(), Queues.QL_WAIT_TASK_MESSAGE.routingKey(), cronContext, m -> {
-                m.getMessageProperties().setDelay(30000);
+                m.getMessageProperties().setDelay(5000);
                 return m;
             });
         }
@@ -46,7 +46,7 @@ public class MQTaskQueueProcessor extends TaskQueueProcessor {
         } else {
             // 元素状态不符合，放回队列
             this.rabbitTemplate.convertAndSend(Queues.QL_WAIT_TASK_MESSAGE.exchange(), Queues.QL_WAIT_TASK_MESSAGE.routingKey(), cronContext, m -> {
-                m.getMessageProperties().setDelay(30000);
+                m.getMessageProperties().setDelay(5000);
                 return m;
             });
         }
