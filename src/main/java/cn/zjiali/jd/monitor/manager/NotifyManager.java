@@ -52,7 +52,7 @@ public class NotifyManager {
         } catch (Exception e) {
             logger.error("发送通知失败!e:{}", ExceptionUtils.getStackTrace(e));
         }
-        if (tgProp.enable()) {
+        if (Boolean.TRUE.equals(tgProp.enable())) {
             tgManager.sendMessage(1881119157L, content);
         }
     }

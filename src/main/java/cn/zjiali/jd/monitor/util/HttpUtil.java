@@ -20,7 +20,10 @@ import java.util.Map;
 public class HttpUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(HttpUtil.class);
-    private final static HttpClient httpClient;
+    private static final HttpClient httpClient;
+
+    private HttpUtil() {
+    }
 
     static {
         httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(20)).build();
