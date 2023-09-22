@@ -1,7 +1,6 @@
 package cn.zjiali.jd.monitor.ql;
 
 import cn.zjiali.jd.monitor.db.Config;
-import cn.zjiali.jd.monitor.db.ConfigRepository;
 import cn.zjiali.jd.monitor.tg.TgManager;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -27,13 +26,13 @@ public class EnvMessageParserManager {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Cache<String, String> runIgnoreCache;
     private final MQTaskQueueProcessor mqTaskQueueProcessor;
-    private final ConfigRepository configRepository;
     private final TgManager tgManager;
+    private final EnvConfigManager envConfigManager;
 
-    public EnvMessageParserManager(MQTaskQueueProcessor mqTaskQueueProcessor, ConfigRepository configRepository, TgManager tgManager) {
+    public EnvMessageParserManager(MQTaskQueueProcessor mqTaskQueueProcessor, TgManager tgManager, EnvConfigManager envConfigManager) {
         this.mqTaskQueueProcessor = mqTaskQueueProcessor;
-        this.configRepository = configRepository;
         this.tgManager = tgManager;
+        this.envConfigManager = envConfigManager;
         this.runIgnoreCache = Caffeine.newBuilder().expireAfterWrite(Duration.ofSeconds(120)).build();
     }
 
@@ -53,7 +52,7 @@ public class EnvMessageParserManager {
     }
 
     public void envParser(String text) {
-        List<Config> configInfos = configRepository.findAll();
+        List<Config> configInfos = envConfigManager.getConfigList();
         Map<CronScript, Map<String, String>> scriptEnvMap = new HashMap<>();
         for (Config configInfo : configInfos) {
             String keyword = configInfo.getKeyword();

@@ -3,8 +3,9 @@ tg:
   apiHash:
   userPhone:
   adminId:
-proxy:
   enable: true
+proxy:
+  enable: false
   host: 127.0.0.1
   type: socks5
   port: 7890
@@ -20,14 +21,8 @@ notify:
   group: 京东监控
 
 spring:
-  jpa:
-    database-platform: org.hibernate.community.dialect.SQLiteDialect
-    defer-datasource-initialization: true
-    hibernate:
-      ddl-auto: update
-  datasource:
-    url: jdbc:sqlite:JdMonitor.db
-    driver-class-name: org.sqlite.JDBC
+  profiles:
+    active: dev
 
 monitor:
   data-url: https://file.fanlisky.cn/d/share/env.json
