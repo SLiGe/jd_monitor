@@ -57,7 +57,7 @@ public class TextPatternTest {
     public void testMessage(){
         String message = """
                 🎯 店铺抽奖 · 超级会员
-                export LUCK_DRAW_URL="https://cjhy-isv.isvjcloud.com/wxDrawActivity/activity/1446376?activityId=b41b3477f267435886a777541004701b"
+                export jd_joinCommonId="8036fbc67e784f81a807034147c21dc4&1000002672"
                 """;
         envMessageParserManager.envParser(message);
     }
